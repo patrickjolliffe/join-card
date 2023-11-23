@@ -1,0 +1,207 @@
+Autotrace TraceOnly
+ Exhibits the performance statistics with silent query output
+Join condition: t2.join1 = t1.join1
+Filter on just T1
+
+242 rows selected. 
+
+
+PLAN_TABLE_OUTPUT                                                                    
+____________________________________________________________________________________ 
+SQL_ID  6gxmua6g7g88p, child number 0                                                
+-------------------------------------                                                
+select t1.v1, t2.v1 from  t1,  t2 where  t2.join1 = t1.join1 and                     
+t1.filter = 1                                                                        
+                                                                                     
+Plan hash value: 1838229974                                                          
+                                                                                     
+-----------------------------------------------------------------------              
+| Id  | Operation          | Name | E-Rows |  OMem |  1Mem | Used-Mem |              
+-----------------------------------------------------------------------              
+|   0 | SELECT STATEMENT   |      |        |       |       |          |              
+|*  1 |  HASH JOIN         |      |    250 |  1610K|  1610K| 1282K (0)|              
+|*  2 |   TABLE ACCESS FULL| T1   |     10 |       |       |          |              
+|   3 |   TABLE ACCESS FULL| T2   |   1000 |       |       |          |              
+-----------------------------------------------------------------------              
+                                                                                     
+Predicate Information (identified by operation id):                                  
+---------------------------------------------------                                  
+                                                                                     
+   1 - access("T2"."JOIN1"="T1"."JOIN1")                                             
+   2 - filter("T1"."FILTER"=1)                                                       
+                                                                                     
+Note                                                                                 
+-----                                                                                
+   - cpu costing is off (consider enabling it)                                       
+   - Warning: basic plan statistics not available. These are only collected when:    
+       * hint 'gather_plan_statistics' is used for the statement or                  
+       * parameter 'statistics_level' is set to 'ALL', at session or system level    
+                                                                                     
+
+Statistics
+-----------------------------------------------------------
+               1  ASSM cbk:blocks examined
+               1  ASSM gsp:L1 bitmaps examined
+               1  ASSM gsp:L2 bitmaps examined
+               1  ASSM gsp:get free block
+              13  CPU used by this session
+              30  CPU used when call started
+              30  DB time
+               5  HSC Heap Segment Block Changes
+              15  Requests to/from client
+              15  SQL*Net roundtrips to/from client
+               3  blocks cleaned out using minact
+               9  buffer is not pinned count
+               1  buffer is pinned count
+             445  bytes received via SQL*Net from client
+           69068  bytes sent via SQL*Net to client
+              19  calls to get snapshot scn: kcmgss
+               5  calls to kcmadj
+               5  calls to kcmgas
+               9  calls to kcmgcs
+              10  commit cleanouts
+              10  commit cleanouts successfully completed
+              64  consistent gets
+              10  consistent gets examination
+              10  consistent gets examination (fastpath)
+              64  consistent gets from cache
+              54  consistent gets pin
+              54  consistent gets pin (fastpath)
+               1  cursor authentications
+              30  db block changes
+              27  db block gets
+              27  db block gets from cache
+              22  db block gets from cache (fastpath)
+               9  deferred (CURRENT) block cleanout applications
+              15  enqueue releases
+              15  enqueue requests
+              12  execute count
+               5  index fetch by key
+          745472  logical read bytes from cache
+               2  messages sent
+              49  no work - consistent read gets
+              23  non-idle wait count
+              12  opened cursors cumulative
+               1  opened cursors current
+               7  parse count (hard)
+               6  parse count (total)
+              12  parse time cpu
+              10  parse time elapsed
+              21  recursive calls
+              11  recursive cpu usage
+              15  redo entries
+            4740  redo size
+               1  redo synch time (usec)
+               1  redo synch writes
+               8  session cursor cache hits
+              91  session logical reads
+               1  sorts (memory)
+            1593  sorts (rows)
+              49  table scan blocks gotten
+            2754  table scan disk non-IMC rows gotten
+            2754  table scan rows gotten
+               2  table scans (short tables)
+            1180  undo change vector size
+              16  user calls
+Join condition: t2.join1 = t1.join1
+Filter on just T2
+
+204 rows selected. 
+
+
+PLAN_TABLE_OUTPUT                                                                    
+____________________________________________________________________________________ 
+SQL_ID  fc1vkdw66hza9, child number 0                                                
+-------------------------------------                                                
+select t1.v1, t2.v1 from  t1,  t2 where  t2.join1 = t1.join1 and                     
+t2.filter = 1                                                                        
+                                                                                     
+Plan hash value: 2959412835                                                          
+                                                                                     
+-----------------------------------------------------------------------              
+| Id  | Operation          | Name | E-Rows |  OMem |  1Mem | Used-Mem |              
+-----------------------------------------------------------------------              
+|   0 | SELECT STATEMENT   |      |        |       |       |          |              
+|*  1 |  HASH JOIN         |      |    333 |  1610K|  1610K| 1120K (0)|              
+|*  2 |   TABLE ACCESS FULL| T2   |     10 |       |       |          |              
+|   3 |   TABLE ACCESS FULL| T1   |   1000 |       |       |          |              
+-----------------------------------------------------------------------              
+                                                                                     
+Predicate Information (identified by operation id):                                  
+---------------------------------------------------                                  
+                                                                                     
+   1 - access("T2"."JOIN1"="T1"."JOIN1")                                             
+   2 - filter("T2"."FILTER"=1)                                                       
+                                                                                     
+Note                                                                                 
+-----                                                                                
+   - cpu costing is off (consider enabling it)                                       
+   - Warning: basic plan statistics not available. These are only collected when:    
+       * hint 'gather_plan_statistics' is used for the statement or                  
+       * parameter 'statistics_level' is set to 'ALL', at session or system level    
+                                                                                     
+
+Statistics
+-----------------------------------------------------------
+               8  CPU used by this session
+               8  CPU used when call started
+               8  DB time
+               1  HSC Heap Segment Block Changes
+              14  Requests to/from client
+              13  SQL*Net roundtrips to/from client
+               5  buffer is not pinned count
+               1  buffer is pinned count
+             431  bytes received via SQL*Net from client
+           68151  bytes sent via SQL*Net to client
+               6  calls to get snapshot scn: kcmgss
+               1  calls to kcmadj
+               1  calls to kcmgas
+               6  calls to kcmgcs
+               2  commit cleanouts
+               2  commit cleanouts successfully completed
+              52  consistent gets
+               2  consistent gets examination
+               2  consistent gets examination (fastpath)
+              52  consistent gets from cache
+              50  consistent gets pin
+              50  consistent gets pin (fastpath)
+               6  db block changes
+               5  db block gets
+               5  db block gets from cache
+               4  db block gets from cache (fastpath)
+               1  deferred (CURRENT) block cleanout applications
+               3  enqueue releases
+               3  enqueue requests
+               4  execute count
+               1  index fetch by key
+          466944  logical read bytes from cache
+               1  messages sent
+              46  no work - consistent read gets
+              20  non-idle wait count
+               4  opened cursors cumulative
+               1  opened cursors current
+               1  parse count (hard)
+               2  parse count (total)
+               8  parse time cpu
+               7  parse time elapsed
+               1  process last non-idle time
+               3  recursive calls
+               7  recursive cpu usage
+               3  redo entries
+             944  redo size
+               1  redo synch time (usec)
+               1  redo synch writes
+               2  session cursor cache hits
+              57  session logical reads
+               1  sorts (memory)
+            1593  sorts (rows)
+              46  table scan blocks gotten
+            2580  table scan disk non-IMC rows gotten
+            2580  table scan rows gotten
+               2  table scans (short tables)
+             236  undo change vector size
+              14  user calls
+
+Session altered.
+
+Autotrace Disabled

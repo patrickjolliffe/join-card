@@ -1,0 +1,167 @@
+SQL> 
+SQL> DROP TABLE d;
+
+Table D dropped.
+
+SQL> CREATE TABLE d (id NUMBER PRIMARY KEY);
+
+Table D created.
+
+SQL> INSERT INTO d VALUES (1);
+
+1 row inserted.
+
+SQL> INSERT INTO d VALUES (10);
+
+1 row inserted.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> drop table f;
+
+Table F dropped.
+
+SQL> create table f(id NUMBER);
+
+Table F created.
+
+SQL> insert into f select 1  from dual;
+
+1 row inserted.
+
+SQL> insert into f select 10 from dual connect by level <= 10;
+
+10 rows inserted.
+
+SQL> insert into f select 100 from dual connect by level <= 100;
+
+100 rows inserted.
+
+SQL> insert into f select 1000 from dual connect by level <= 1000;
+
+1,000 rows inserted.
+
+SQL> insert into f select 10000 from dual connect by level <= 10000;
+
+10,000 rows inserted.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(null, 'D', METHOD_OPT=>'FOR COLUMNS ID SIZE 255');
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC dbms_stats.gather_table_stats(NULL, 'F', METHOD_OPT=>'FOR COLUMNS ID SIZE 255');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> explain plan for 
+  2  SELECT NULL  
+  3  FROM
+  4      d, f
+  5  WHERE f.id = d.id;
+
+Explained.
+
+SQL> 
+SQL> select * from dbms_xplan.display();
+
+PLAN_TABLE_OUTPUT                                                                     
+_____________________________________________________________________________________ 
+Plan hash value: 913259743                                                            
+                                                                                      
+----------------------------------------------------------------------------------    
+| Id  | Operation          | Name        | Rows  | Bytes | Cost (%CPU)| Time     |    
+----------------------------------------------------------------------------------    
+|   0 | SELECT STATEMENT   |             |    11 |    66 |     8  (13)| 00:00:01 |    
+|   1 |  NESTED LOOPS      |             |    11 |    66 |     8  (13)| 00:00:01 |    
+|   2 |   TABLE ACCESS FULL| F           | 11111 | 33333 |     7   (0)| 00:00:01 |    
+|*  3 |   INDEX UNIQUE SCAN| SYS_C008351 |     1 |     3 |     0   (0)| 00:00:01 |    
+----------------------------------------------------------------------------------    
+                                                                                      
+Predicate Information (identified by operation id):                                   
+---------------------------------------------------                                   
+                                                                                      
+   3 - access("F"."ID"="D"."ID")                                                      
+
+15 rows selected. 
+
+SQL> 
+SQL> explain plan for 
+  2  SELECT NULL  
+  3  FROM
+  4      d, f
+  5  WHERE f.id = d.id
+  6      AND      (f.id IN (0, 10000));
+
+Explained.
+
+SQL> 
+SQL> select * from dbms_xplan.display();
+
+PLAN_TABLE_OUTPUT                                                                     
+_____________________________________________________________________________________ 
+Plan hash value: 913259743                                                            
+                                                                                      
+----------------------------------------------------------------------------------    
+| Id  | Operation          | Name        | Rows  | Bytes | Cost (%CPU)| Time     |    
+----------------------------------------------------------------------------------    
+|   0 | SELECT STATEMENT   |             |  5000 | 30000 |     8  (13)| 00:00:01 |    
+|   1 |  NESTED LOOPS      |             |  5000 | 30000 |     8  (13)| 00:00:01 |    
+|*  2 |   TABLE ACCESS FULL| F           | 10000 | 30000 |     7   (0)| 00:00:01 |    
+|*  3 |   INDEX UNIQUE SCAN| SYS_C008351 |     1 |     3 |     0   (0)| 00:00:01 |    
+----------------------------------------------------------------------------------    
+                                                                                      
+Predicate Information (identified by operation id):                                   
+---------------------------------------------------                                   
+                                                                                      
+   2 - filter("F"."ID"=0 OR "F"."ID"=10000)                                           
+   3 - access("F"."ID"="D"."ID")                                                      
+       filter("D"."ID"=0 OR "D"."ID"=10000)                                           
+
+17 rows selected. 
+
+SQL> 
+SQL> explain plan for 
+  2  SELECT NULL  
+  3  FROM
+  4      f
+  5  WHERE id IN (select d.id FROM d)
+  6      AND      (f.id IN (0, 10000));
+
+Explained.
+
+SQL> 
+SQL> select * from dbms_xplan.display();
+
+PLAN_TABLE_OUTPUT                                                                     
+_____________________________________________________________________________________ 
+Plan hash value: 913259743                                                            
+                                                                                      
+----------------------------------------------------------------------------------    
+| Id  | Operation          | Name        | Rows  | Bytes | Cost (%CPU)| Time     |    
+----------------------------------------------------------------------------------    
+|   0 | SELECT STATEMENT   |             |  5000 | 30000 |     8  (13)| 00:00:01 |    
+|   1 |  NESTED LOOPS      |             |  5000 | 30000 |     8  (13)| 00:00:01 |    
+|*  2 |   TABLE ACCESS FULL| F           | 10000 | 30000 |     7   (0)| 00:00:01 |    
+|*  3 |   INDEX UNIQUE SCAN| SYS_C008351 |     1 |     3 |     0   (0)| 00:00:01 |    
+----------------------------------------------------------------------------------    
+                                                                                      
+Predicate Information (identified by operation id):                                   
+---------------------------------------------------                                   
+                                                                                      
+   2 - filter("F"."ID"=0 OR "F"."ID"=10000)                                           
+   3 - access("ID"="D"."ID")                                                          
+       filter("D"."ID"=0 OR "D"."ID"=10000)                                           
+
+17 rows selected. 
+
+SQL> 
+SQL> exit;
