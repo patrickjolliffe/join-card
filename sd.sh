@@ -1,0 +1,2 @@
+#!/bin/bash
+sqlplus pdbadmin/ABCabc123\!\!\!@localhost:1521/freepdb1 @$1
